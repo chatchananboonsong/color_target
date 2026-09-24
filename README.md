@@ -68,7 +68,7 @@ source .venv/bin/activate
 ### 2) ติดตั้ง dependency
 
 ```powershell
-cd .\color_detect_Robert_Downy_juno\
+cd .\color_target\
 ```
 
 ```powershell
