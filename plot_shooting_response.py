@@ -27,6 +27,8 @@ plt.rcParams['axes.unicode_minus'] = False
 def find_csv_file():
     """ค้นหาไฟล์ CSV ข้อมูลการยิง"""
     candidates = [
+        "sequence_auto_water_response.csv",
+        os.path.join("data", "sequence_auto_water_response.csv"),
         "sequence_auto_infrared_response.csv",
         os.path.join("data", "sequence_auto_infrared_response.csv"),
         "sequence_learned_response.csv",

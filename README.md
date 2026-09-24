@@ -16,6 +16,9 @@
 color_detect/
 │
 ├── 🚀 โปรแกรมหลัก (Main Programs)
+│   ├── color_target_auto_water.py      # ระบบเรียงลำดับเป้าหมายจากซ้ายไปขวา & ยิงกระสุนเจลจริง (WATER_FIRE) อัตโนมัติ
+│   ├── color_target_gui.py             # ระบบเล็งเป้าหมายพร้อมหน้าต่างกราฟิก UI (เลือกได้หลายแบบพร้อมกัน)
+│   ├── color_target_auto_selective.py  # ระบบล็อกเป้าที่สามารถเลือกสีและรูปทรงที่ต้องการเล็งได้ (Terminal/CLI/Hotkeys)
 │   ├── color_target_auto_infrared.py   # ระบบล็อกเป้าและยิงอินฟราเรดอัตโนมัติตามลำดับ 
 │   └── hsv_color_tuner.py              # เครื่องมือจูนค่าสี HSV แบบเรียลไทม์ผ่าน Trackbar
 │
@@ -40,11 +43,9 @@ color_detect/
 ## 🛠️ รายละเอียดของแต่ละไฟล์
 
 | ชื่อไฟล์ | หน้าที่ / การทำงาน |
-| :--- | :--- |
-| **`color_target_auto_infrared.py`** | **ระบบยิงอินฟราเรดอัตโนมัติ**: ตรวจจับเป้าหมายสีและทรงกลม/สี่เหลี่ยม เรียงจากซ้ายไปขวา เมื่อกดล็อกลำดับ ระบบจะใช้ PID เล็งแต่ละเป้าจนนิ่งเข้ากึ่งกลาง (`tolerance < 2%`, หน่วงเวลา 0.35s) แล้วสั่งยิงอินฟราเรด (`INFRARED_FIRE`) และเลื่อนไปเป้าถัดไปโดยอัตโนมัติ |
-| **`plot_shooting_response.py`** | **วิเคราะห์และวาดกราฟ**: อ่านข้อมูล CSV แสดงมุม Yaw/Pitch, PID Settling Time, จังหวะยิงอินฟราเรด (Shot #1, #2, #3), และเซฟกราฟความละเอียดสูงลง `plots/shooting_response_plot.png` |
+| **`color_target_gui.py`** | **ระบบยิงอินฟราเรดพร้อมหน้าต่าง UI (แนะนำ)**: มีหน้าต่างกราฟิก UI สวยงาม แสดงตาราง Checkbox 4x4 (16 รูปแบบเป้าหมาย: ทรงกลม, สี่เหลี่ยมจัตุรัส, ผืนผ้านอน, ผืนผ้าตั้ง) ให้คลิกเลือกสีและรูปทรงหลายแบบพร้อมกันได้อย่างสะดวก สามารถเปิด UI สลับเป้าหมายใหม่ได้ตลอดเวลาด้วยปุ่ม `[M]` |
+| **`plot_shooting_response.py`** | **วิเคราะห์และวาดกราฟ**: อ่านข้อมูล CSV แสดงมุม Yaw/Pitch, PID Settling Time, จังหวะยิงกระสุน (Shot #1, #2, #3), และเซฟกราฟความละเอียดสูงลง `plots/shooting_response_plot.png` |
 | **`hsv_color_tuner.py`** | **ปรับแต่งสี HSV**: เปิดกล้องหุ่นยนต์พร้อม Trackbar ปรับขอบเขตสี (Lower / Upper) และบันทึกลง `hsv_config.json` |
-| **`color_target_switch_pid.py`** | **ระบบยิงกระสุนเจล (Manual)**: โหมดเดิมสำหรับผู้ใช้ที่ต้องการยิงกระสุนน้ำเจลจริง (`WATER_FIRE`) โดยกดยืนยันผ่าน Spacebar |
 | **`hsv_config.json`** | ตารางค่าสี HSV ของ Red, Green, Blue, Yellow และรหัสสีไฟ LED ประจำเป้าหมาย |
 
 ---
@@ -77,10 +78,58 @@ cd .\color_detect_Robert_Downy_juno\
 pip install robomaster
 pip install matplotlib
 ```
-### 3) รันโค้ดบันทึกข้อมูลจาก RoboMaster
+### 3) รันโปรแกรมติดตามและยิงเป้าหมาย
 
+**แบบที่ 1: ลำดับจากซ้ายไปขวา และยิงกระสุนเจลจริงอัตโนมัติ (Left-to-Right & Real Water Bullet Fire)**
+```powershell
+python color_target_auto_water.py
+```
+*(ระบบจะตรวจจับเป้าหมายสีและรูปทรง เรียงลำดับจากซ้ายไปขวาอัตโนมัติ เมื่อกด Spacebar ล็อกลำดับ หุ่นยนต์จะใช้ PID เล็งทีละเป้าจนนิ่งเข้ากึ่งกลาง แล้วสั่งยิงกระสุนเจลจริง `WATER_FIRE` อัตโนมัติทีละเป้าจนครบทุกเป้า)*
+
+**แบบที่ 2: รันผ่านหน้าต่างกราฟิก UI (เลือกได้หลายแบบพร้อมกันผ่าน Checkbox)**
+```powershell
+python color_target_gui.py
+```
+*(จะมีหน้าต่าง UI สวยงามขึ้นมาให้ติ๊กเลือกเป้าหมายที่ต้องการได้หลายแบบพร้อมกัน ทั้งแบบรายเป้า, ทั้งแถวสี, ทั้งคอลัมน์รูปทรง หรือเลือกทั้งหมด)*
+
+**แบบที่ 3: เล็งตามลำดับทุกเป้าหมายด้วยอินฟราเรด (Original Left-to-Right Infrared)**
 ```powershell
 python color_target_auto_infrared.py
+```
+*(สามารถกดปุ่ม `[T]` ขณะโปรแกรมทำงานเพื่อสลับระหว่างกระสุนเจลจริงและอินฟราเรดได้)*
+
+**แบบที่ 4: เลือกสีและรูปทรงผ่าน Terminal / CLI Arguments / Hotkeys**
+```powershell
+# รันพร้อมเปิดเมนูเลือกสีและรูปทรงใน Terminal
+python color_target_auto_selective.py
+
+# หรือระบุสีและรูปทรงผ่านคำสั่งโดยตรง:
+# - เล็งเฉพาะทรงกลมสีแดง
+python color_target_auto_selective.py --color Red --shape Circle
+
+# - เล็งเฉพาะสี่เหลี่ยมจัตุรัสสีเขียว (Square)
+python color_target_auto_selective.py --color Green --shape Square
+
+# - เล็งเฉพาะสี่เหลี่ยมผืนผ้าแนวนอนสีน้ำเงิน (Horizontal Rectangle)
+python color_target_auto_selective.py --color Blue --shape Rect_H
+
+# - เล็งเฉพาะสี่เหลี่ยมผืนผ้าแนวตั้งสีเขียว (Vertical Rectangle)
+python color_target_auto_selective.py --color Green --shape Rect_V
+
+# - เล็งสี่เหลี่ยมทุกแบบของสีเหลือง (ทั้งจัตุรัส ตั้ง และนอน)
+python color_target_auto_selective.py --color Yellow --shape Rectangle
+
+# - เล็งหลายสีพร้อมกัน (เช่น เล็งสีแดงและสีเขียว ทุกรูปทรง)
+python color_target_auto_selective.py --color Red,Green
+
+# - เล็งหลายสีเฉพาะทรงกลม (เช่น ทรงกลมสีแดง และ ทรงกลมสีน้ำเงิน)
+python color_target_auto_selective.py --color Red,Blue --shape Circle
+
+# - เล็งหลายสีและหลายรูปทรง (เช่น สีแดงและสีน้ำเงิน ทั้งทรงกลมและผืนผ้านอน)
+python color_target_auto_selective.py --color Red,Blue --shape Circle,Rect_H
+
+# - เล็งเจาะจงคู่เป้าหมายหลายคู่ (เช่น ทรงกลมสีแดง + ผืนผ้านอนสีเขียว)
+python color_target_auto_selective.py --pair "Red:Circle,Green:Rect_H"
 ```
 
 ### 4) รันสคริปต์เพื่อแสดงกราฟ
